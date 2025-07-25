@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能闹钟</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600;700&family=SF+Pro+Text:wght@400;600&display=swap">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <button class="header-button">编辑</button>
+            <h1 class="header-title">闹钟</h1>
+            <button class="header-button add-button">+</button>
+        </header>
+
+        <main class="alarm-list">
+            <!-- Alarm Item 1 -->
+            <div class="alarm-card">
+                <div class="alarm-info">
+                    <div class="alarm-time">07:30</div>
+                    <div class="alarm-label">上班提醒</div>
+                    <div class="alarm-repeat">周一至周五</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <!-- Alarm Item 2 -->
+            <div class="alarm-card">
+                <div class="alarm-info">
+                    <div class="alarm-time">12:00</div>
+                    <div class="alarm-label">午餐</div>
+                    <div class="alarm-repeat">每天</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <!-- Alarm Item 3 -->
+            <div class="alarm-card">
+                <div class="alarm-info">
+                    <div class="alarm-time">22:00</div>
+                    <div class="alarm-label">睡觉</div>
+                    <div class="alarm-repeat">一次性</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="no-alarm-message" style="display: none;">
+                <p>暂无闹钟，点击“+”添加闹钟</p>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+
+

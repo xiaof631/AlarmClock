@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置闹钟</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="alarm-setup.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <button class="header-button cancel-button">取消</button>
+            <h1 class="header-title">添加闹钟</h1>
+            <button class="header-button save-button">保存</button>
+        </header>
+
+        <main class="setup-content">
+            <!-- 时间选择器 -->
+            <div class="time-picker-section">
+                <div class="time-picker">
+                    <div class="time-display">
+                        <span class="hour">07</span>
+                        <span class="separator">:</span>
+                        <span class="minute">30</span>
+                        <span class="period">AM</span>
+                    </div>
+                    <div class="time-wheels">
+                        <div class="wheel hour-wheel">
+                            <div class="wheel-item">06</div>
+                            <div class="wheel-item active">07</div>
+                            <div class="wheel-item">08</div>
+                        </div>
+                        <div class="wheel minute-wheel">
+                            <div class="wheel-item">25</div>
+                            <div class="wheel-item active">30</div>
+                            <div class="wheel-item">35</div>
+                        </div>
+                        <div class="wheel period-wheel">
+                            <div class="wheel-item active">AM</div>
+                            <div class="wheel-item">PM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设置选项 -->
+            <div class="settings-section">
+                <div class="setting-item">
+                    <label class="setting-label">标签</label>
+                    <input type="text" class="setting-input" placeholder="闹钟名称" value="上班提醒">
+                </div>
+
+                <div class="setting-item clickable">
+                    <label class="setting-label">重复</label>
+                    <div class="setting-value">
+                        <span>周一至周五</span>
+                        <span class="chevron">›</span>
+                    </div>
+                </div>
+
+                <div class="setting-item clickable">
+                    <label class="setting-label">铃声</label>
+                    <div class="setting-value">
+                        <span>默认</span>
+                        <span class="chevron">›</span>
+                    </div>
+                </div>
+
+                <div class="setting-item clickable">
+                    <label class="setting-label">贪睡</label>
+                    <div class="setting-value">
+                        <span>9分钟</span>
+                        <span class="chevron">›</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label">音量</label>
+                    <div class="volume-control">
+                        <input type="range" class="volume-slider" min="0" max="100" value="75">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 删除按钮 (编辑模式下显示) -->
+            <div class="delete-section" style="display: none;">
+                <button class="delete-button">删除闹钟</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="alarm-setup.js"></script>
+</body>
+</html>
+

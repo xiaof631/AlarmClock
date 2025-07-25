@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS闹钟应用 - 高保真原型</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="device-frame">
+        <div class="status-bar">
+            <div class="status-left">
+                <span class="time">9:41</span>
+            </div>
+            <div class="status-right">
+                <span class="battery">100%</span>
+                <div class="battery-icon"></div>
+            </div>
+        </div>
+
+        <div class="app-container">
+            <!-- 闹钟列表界面 -->
+            <div class="screen active" id="alarm-list">
+                <header class="nav-header">
+                    <h1>闹钟</h1>
+                    <button class="add-btn">+</button>
+                </header>
+
+                <div class="alarm-list">
+                    <div class="alarm-card active">
+                        <div class="alarm-time">07:00</div>
+                        <div class="alarm-details">
+                            <div class="alarm-label">工作日闹钟</div>
+                            <div class="alarm-repeat">周一至周五</div>
+                        </div>
+                        <div class="alarm-toggle on"></div>
+                    </div>
+
+                    <div class="alarm-card">
+                        <div class="alarm-time">22:30</div>
+                        <div class="alarm-details">
+                            <div class="alarm-label">睡前提醒</div>
+                            <div class="alarm-repeat">每天</div>
+                        </div>
+                        <div class="alarm-toggle"></div>
+                    </div>
+
+                    <div class="alarm-card">
+                        <div class="alarm-time">06:30</div>
+                        <div class="alarm-details">
+                            <div class="alarm-label">晨练</div>
+                            <div class="alarm-repeat">周末</div>
+                        </div>
+                        <div class="alarm-toggle on"></div>
+                    </div>
+                </div>
+
+                <div class="next-alarm">
+                    <span>下个闹钟：今天 07:00</span>
+                </div>
+            </div>
+
+            <!-- 闹钟设置界面 -->
+            <div class="screen" id="alarm-setup">
+                <header class="nav-header">
+                    <button class="back-btn">取消</button>
+                    <h1>添加闹钟</h1>
+                    <button class="save-btn">保存</button>
+                </header>
+
+                <div class="time-picker">
+                    <div class="time-display">07:00</div>
+                    <div class="am-pm-toggle">
+                        <button class="am active">上午</button>
+                        <button class="pm">下午</button>
+                    </div>
+                </div>
+
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <span class="setting-label">标签</span>
+                        <span class="setting-value">闹钟</span>
+                        <span class="chevron">></span>
+                    </div>
+
+                    <div class="setting-item">
+                        <span class="setting-label">重复</span>
+                        <span class="setting-value">永不</span>
+                        <span class="chevron">></span>
+                    </div>
+
+                    <div class="setting-item">
+                        <span class="setting-label">铃声</span>
+                        <span class="setting-value">雷达</span>
+                        <span class="chevron">></span>
+                    </div>
+
+                    <div class="setting-item">
+                        <span class="setting-label">贪睡</span>
+                        <div class="toggle-switch on"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 场景选择界面 -->
+            <div class="screen" id="scenarios">
+                <header class="nav-header">
+                    <button class="back-btn">
+                        < 返回</button>
+                            <h1>选择场景</h1>
+                </header>
+
+                <div class="scenarios-container">
+                    <div class="scenarios-grid">
+                        <div class="scenario-card" data-scenario="work">
+                            <div class="scenario-icon">💼</div>
+                            <div class="scenario-name">工作场景</div>
+                            <div class="scenario-desc">会议管理、任务提醒、休息调整</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="study">
+                            <div class="scenario-icon">📚</div>
+                            <div class="scenario-name">学习场景</div>
+                            <div class="scenario-desc">课程管理、考试作业、自主学习</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="health">
+                            <div class="scenario-icon">❤️</div>
+                            <div class="scenario-name">健康运动</div>
+                            <div class="scenario-desc">日常健康、药物提醒、运动锻炼</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="family">
+                            <div class="scenario-icon">🏠</div>
+                            <div class="scenario-name">家庭生活</div>
+                            <div class="scenario-desc">家务管理、儿童照顾、宠物护理</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="cooking">
+                            <div class="scenario-icon">🍳</div>
+                            <div class="scenario-name">厨房烹饪</div>
+                            <div class="scenario-desc">食材准备、烹饪计时、烘焙活动</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="transport">
+                            <div class="scenario-icon">🚗</div>
+                            <div class="scenario-name">交通出行</div>
+                            <div class="scenario-desc">日常通勤、长途旅行、车辆维护</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="social">
+                            <div class="scenario-icon">👥</div>
+                            <div class="scenario-name">社交活动</div>
+                            <div class="scenario-desc">社交约会、人际维护、社交礼仪</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="personal">
+                            <div class="scenario-icon">💆</div>
+                            <div class="scenario-name">个人护理</div>
+                            <div class="scenario-desc">日常清洁、皮肤护理、美容美发</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="entertainment">
+                            <div class="scenario-icon">🎮</div>
+                            <div class="scenario-name">休闲娱乐</div>
+                            <div class="scenario-desc">数字娱乐、户外活动、文化娱乐</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="special">
+                            <div class="scenario-icon">🎉</div>
+                            <div class="scenario-name">特殊场合</div>
+                            <div class="scenario-desc">节日庆典、重要时刻、纪念活动</div>
+                        </div>
+                        <!-- 在现有场景卡片后添加 -->
+                        <div class="scenario-card" data-scenario="finance">
+                            <div class="scenario-icon">💰</div>
+                            <div class="scenario-name">财务管理</div>
+                            <div class="scenario-desc">投资理财、预算控制、税务合规</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="digital">
+                            <div class="scenario-icon">📱</div>
+                            <div class="scenario-name">数字健康</div>
+                            <div class="scenario-desc">屏幕时间、内容创作、网络安全</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="hobby">
+                            <div class="scenario-icon">🎨</div>
+                            <div class="scenario-name">兴趣爱好</div>
+                            <div class="scenario-desc">阅读计划、乐器练习、园艺创作</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="community">
+                            <div class="scenario-icon">🏘️</div>
+                            <div class="scenario-name">社区邻里</div>
+                            <div class="scenario-desc">社区活动、邻里互助、环保行动</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="safety">
+                            <div class="scenario-icon">🛡️</div>
+                            <div class="scenario-name">安全防护</div>
+                            <div class="scenario-desc">安全检查、紧急联系、天气预警</div>
+                        </div>
+
+                        <div class="scenario-card" data-scenario="growth">
+                            <div class="scenario-icon">🌟</div>
+                            <div class="scenario-name">个人成长</div>
+                            <div class="scenario-desc">自我反思、目标管理、心理健康</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 场景模板列表界面 -->
+            <div class="screen" id="scenario-templates">
+                <header class="nav-header">
+                    <button class="back-btn">
+                        < 返回</button>
+                            <h1 id="scenario-title">工作场景模板</h1>
+                </header>
+
+                <div class="templates-container">
+                    <div class="templates-list" id="templates-list">
+                        <!-- 模板内容将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 闹钟响铃界面 -->
+            <div class="screen" id="alarm-alert">
+                <div class="alert-container">
+                    <div class="alert-time">07:00</div>
+                    <div class="alert-label">工作日闹钟</div>
+                    <div class="alert-date">周一，12月25日</div>
+
+                    <div class="alert-actions">
+                        <button class="snooze-btn">贪睡</button>
+                        <button class="stop-btn">停止</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="home-indicator"></div>
+    </div>
+
+    <div class="controls">
+        <button data-screen="alarm-list">闹钟列表</button>
+        <button data-screen="alarm-setup">添加闹钟</button>
+        <button data-screen="scenarios">选择场景</button>
+        <button data-screen="alarm-alert">闹钟响铃</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
