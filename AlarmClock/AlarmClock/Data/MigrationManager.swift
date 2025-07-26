@@ -156,19 +156,3 @@ final class MigrationManager {
     }
 }
 
-// MARK: - 扩展LegacyAlarmTemplate的便利初始化
-extension AlarmTemplate {
-    convenience init(from legacyTemplate: LegacyAlarmTemplate) {
-        self.init(
-            name: legacyTemplate.name,
-            category: legacyTemplate.category,
-            icon: legacyTemplate.icon,
-            templateDescription: legacyTemplate.description,
-            time: legacyTemplate.time,
-            frequency: legacyTemplate.frequency,
-            defaultTime: legacyTemplate.defaultTime,
-            repeatType: legacyTemplate.repeatType,
-            scenario: legacyTemplate.scenario.rawValue
-        )
-    }
-}

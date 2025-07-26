@@ -148,39 +148,38 @@ struct ScenarioAlarmsView: View {
     
     init(scenario: ScenarioType) {
         self.scenario = scenario
-        let predicate = #Predicate<Alarm> { alarm in
-            alarm.template?.scenario == scenario.rawValue
-        }
-        _alarms = Query(filter: predicate, sort: [SortDescriptor(\.time)])
+        // 简化查询，不使用复杂的可选链式调用
+        _alarms = Query(sort: [SortDescriptor(\.time)])
     }
     
     var body: some View {
         List {
-            ForEach(alarms) { alarm in
+            ForEach(filteredAlarms) { alarm in
                 SwiftDataAlarmRowView(alarm: alarm)
             }
         }
         .navigationTitle(scenario.title)
         .navigationBarTitleDisplayMode(.large)
     }
+    
+    private var filteredAlarms: [Alarm] {
+        alarms.filter { alarm in
+            alarm.template?.scenario == scenario.rawValue
+        }
+    }
 }
 
 #Preview {
-    do {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: config)
-        
-        // 添加示例数据
-        let context = container.mainContext
-        let sampleAlarm = Alarm(
-            time: Calendar.current.date(bySettingHour: 7, minute: 0, second: 0, of: Date()) ?? Date(),
-            label: "工作日闹钟"
-        )
-        context.insert(sampleAlarm)
-        
-        return SwiftDataContentView()
-            .modelContainer(container)
-    } catch {
-        return Text("Preview Error: \(error.localizedDescription)")
+    SwiftDataContentViewPreview()
+}
+
+struct SwiftDataContentViewPreview: View {
+    var body: some View {
+        if let container = try? ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)) {
+            SwiftDataContentView()
+                .modelContainer(container)
+        } else {
+            Text("Preview Error: Failed to create container")
+        }
     }
 }

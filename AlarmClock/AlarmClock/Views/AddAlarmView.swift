@@ -11,7 +11,7 @@ struct AddAlarmView: View {
     @EnvironmentObject var alarmManager: AlarmManager
     @Environment(\.dismiss) private var dismiss
     
-    let template: AlarmTemplate?
+    let template: LegacyAlarmTemplate?
     
     @State private var selectedTime = Date()
     @State private var label = ""
@@ -21,7 +21,7 @@ struct AddAlarmView: View {
     @State private var snoozeEnabled = true
     @State private var vibrationEnabled = true
     
-    init(template: AlarmTemplate? = nil) {
+    init(template: LegacyAlarmTemplate? = nil) {
         self.template = template
     }
     
@@ -149,7 +149,7 @@ struct AddAlarmView: View {
     }
     
     private func saveAlarm() {
-        let alarm = Alarm(
+        let alarm = AlarmData(
             id: UUID(),
             time: selectedTime,
             label: label,

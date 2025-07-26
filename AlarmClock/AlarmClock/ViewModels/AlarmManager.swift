@@ -10,8 +10,8 @@ import SwiftUI
 import UserNotifications
 
 class AlarmManager: ObservableObject {
-    @Published var alarms: [Alarm] = []
-    @Published var templates: [ScenarioType: [AlarmTemplate]] = [:]
+    @Published var alarms: [AlarmData] = []
+    @Published var templates: [ScenarioType: [LegacyAlarmTemplate]] = [:]
     
     init() {
         loadAlarms()
@@ -20,13 +20,13 @@ class AlarmManager: ObservableObject {
     }
     
     // MARK: - 闹钟管理
-    func addAlarm(_ alarm: Alarm) {
+    func addAlarm(_ alarm: AlarmData) {
         alarms.append(alarm)
         saveAlarms()
         scheduleNotification(for: alarm)
     }
     
-    func updateAlarm(_ alarm: Alarm) {
+    func updateAlarm(_ alarm: AlarmData) {
         if let index = alarms.firstIndex(where: { $0.id == alarm.id }) {
             alarms[index] = alarm
             saveAlarms()
@@ -34,13 +34,13 @@ class AlarmManager: ObservableObject {
         }
     }
     
-    func deleteAlarm(_ alarm: Alarm) {
+    func deleteAlarm(_ alarm: AlarmData) {
         alarms.removeAll { $0.id == alarm.id }
         saveAlarms()
         cancelNotification(for: alarm)
     }
     
-    func toggleAlarm(_ alarm: Alarm) {
+    func toggleAlarm(_ alarm: AlarmData) {
         if let index = alarms.firstIndex(where: { $0.id == alarm.id }) {
             alarms[index].isEnabled.toggle()
             saveAlarms()
@@ -53,7 +53,7 @@ class AlarmManager: ObservableObject {
         }
     }
     
-    func toggleAlarm(_ alarm: Alarm, enabled: Bool) {
+    func toggleAlarm(_ alarm: AlarmData, enabled: Bool) {
         if let index = alarms.firstIndex(where: { $0.id == alarm.id }) {
             alarms[index].isEnabled = enabled
             saveAlarms()
@@ -75,23 +75,23 @@ class AlarmManager: ObservableObject {
     
     private func loadAlarms() {
         if let data = UserDefaults.standard.data(forKey: "SavedAlarms"),
-           let decoded = try? JSONDecoder().decode([Alarm].self, from: data) {
+           let decoded = try? JSONDecoder().decode([AlarmData].self, from: data) {
             alarms = decoded
         } else {
             // 添加示例闹钟
             alarms = [
-                Alarm(
+                AlarmData(
                     time: Calendar.current.date(bySettingHour: 7, minute: 0, second: 0, of: Date()) ?? Date(),
                     label: "工作日闹钟",
                     repeatDays: [.monday, .tuesday, .wednesday, .thursday, .friday]
                 ),
-                Alarm(
+                AlarmData(
                     time: Calendar.current.date(bySettingHour: 22, minute: 30, second: 0, of: Date()) ?? Date(),
                     label: "睡前提醒",
                     isEnabled: false,
                     repeatDays: Array(Weekday.allCases)
                 ),
-                Alarm(
+                AlarmData(
                     time: Calendar.current.date(bySettingHour: 6, minute: 30, second: 0, of: Date()) ?? Date(),
                     label: "晨练",
                     repeatDays: [.saturday, .sunday]
@@ -109,7 +109,7 @@ class AlarmManager: ObservableObject {
         }
     }
     
-    private func scheduleNotification(for alarm: Alarm) {
+    private func scheduleNotification(for alarm: AlarmData) {
         guard alarm.isEnabled else { return }
         
         let center = UNUserNotificationCenter.current()
@@ -164,7 +164,7 @@ class AlarmManager: ObservableObject {
         }
     }
     
-    private func cancelNotification(for alarm: Alarm) {
+    private func cancelNotification(for alarm: AlarmData) {
         let center = UNUserNotificationCenter.current()
         
         if alarm.repeatDays.isEmpty {
@@ -182,11 +182,11 @@ class AlarmManager: ObservableObject {
         }
     }
     
-    func getTemplates(for scenario: ScenarioType) -> [AlarmTemplate] {
+    func getTemplates(for scenario: ScenarioType) -> [LegacyAlarmTemplate] {
         return templates[scenario] ?? []
     }
     
-    func createAlarmFromTemplate(_ template: AlarmTemplate) -> Alarm {
+    func createAlarmFromTemplate(_ template: LegacyAlarmTemplate) -> AlarmData {
         let calendar = Calendar.current
         let now = Date()
         
@@ -216,7 +216,7 @@ class AlarmManager: ObservableObject {
             repeatDays = []
         }
         
-        return Alarm(
+        return AlarmData(
             time: alarmTime,
             label: template.name,
             repeatDays: repeatDays,
@@ -225,7 +225,7 @@ class AlarmManager: ObservableObject {
     }
     
     // MARK: - 辅助方法
-    var nextAlarm: Alarm? {
+    var nextAlarm: AlarmData? {
         let enabledAlarms = alarms.filter { $0.isEnabled }
         guard !enabledAlarms.isEmpty else { return nil }
         
@@ -233,7 +233,7 @@ class AlarmManager: ObservableObject {
         let now = Date()
         
         var nextAlarmTime: Date?
-        var nextAlarm: Alarm?
+        var nextAlarm: AlarmData?
         
         for alarm in enabledAlarms {
             let alarmTime = getNextAlarmTime(for: alarm, from: now)
@@ -247,7 +247,7 @@ class AlarmManager: ObservableObject {
         return nextAlarm
     }
     
-    private func getNextAlarmTime(for alarm: Alarm, from date: Date) -> Date {
+    private func getNextAlarmTime(for alarm: AlarmData, from date: Date) -> Date {
         let calendar = Calendar.current
         let alarmHour = calendar.component(.hour, from: alarm.time)
         let alarmMinute = calendar.component(.minute, from: alarm.time)

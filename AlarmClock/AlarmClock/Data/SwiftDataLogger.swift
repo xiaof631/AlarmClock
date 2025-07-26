@@ -285,7 +285,10 @@ struct DataOperationLog: Identifiable, Codable {
     }
     
     var formattedTimestamp: String {
-        DateFormatter.logFormatter.string(from: timestamp)
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .medium
+        return formatter.string(from: timestamp)
     }
     
     var formattedDuration: String {
@@ -313,23 +316,30 @@ struct DataOperationLog: Identifiable, Codable {
     }
 }
 
-// MARK: - 扩展DataOperationType
-extension DataOperationType {
+// MARK: - 数据操作类型
+enum DataOperationType: String, CaseIterable, Codable {
     case fetch
     case insert
     case update
     case delete
+    case batchInsert
+    case batchUpdate
+    case batchDelete
+    case migration
+    case cacheRefresh
+    case memoryOptimization
 }
 
 // MARK: - 性能指标模型
 struct PerformanceMetric: Identifiable, Codable {
-    let id = UUID()
+    var id = UUID()
     let timestamp: Date
     let operation: String
     let duration: TimeInterval
     let success: Bool
     
     init(operation: String, duration: TimeInterval, success: Bool) {
+        self.id = UUID()
         self.timestamp = Date()
         self.operation = operation
         self.duration = duration
@@ -434,8 +444,9 @@ final class SwiftDataDebugTools {
             // 检查无效引用
             let alarmsWithInvalidTemplates = try context.fetch(FetchDescriptor<Alarm>()).filter { alarm in
                 if let template = alarm.template {
+                    let templateId = template.id
                     let templateExists = (try? context.fetchCount(FetchDescriptor<AlarmTemplate>(
-                        predicate: #Predicate { $0.id == template.id }
+                        predicate: #Predicate<AlarmTemplate> { $0.id == templateId }
                     ))) ?? 0 > 0
                     return !templateExists
                 }

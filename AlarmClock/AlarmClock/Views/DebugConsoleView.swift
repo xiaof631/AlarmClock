@@ -347,7 +347,7 @@ struct DatabaseHealthTabView: View {
                 }
             } else {
                 Spacer()
-                Text("点击"生成报告"查看数据库健康状况")
+                Text("点击\"生成报告\"查看数据库健康状况")
                     .foregroundColor(.secondary)
                 Spacer()
             }
@@ -404,13 +404,16 @@ extension DataOperationType {
 }
 
 #Preview {
-    do {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: config)
-        
-        return DebugConsoleView()
-            .modelContainer(container)
-    } catch {
-        return Text("Preview Error: \(error.localizedDescription)")
+    DebugConsoleViewPreview()
+}
+
+struct DebugConsoleViewPreview: View {
+    var body: some View {
+        if let container = try? ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)) {
+            DebugConsoleView()
+                .modelContainer(container)
+        } else {
+            Text("Preview Error: Failed to create container")
+        }
     }
 }

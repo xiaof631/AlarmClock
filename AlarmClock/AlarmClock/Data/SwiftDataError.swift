@@ -307,15 +307,15 @@ final class SwiftDataErrorHandler {
         } else if errorDescription.contains("delete") {
             return .deleteFailed(error.localizedDescription)
         } else if errorDescription.contains("constraint") {
-            return .constraintViolation("未知约束", error.localizedDescription)
+            return .constraintViolation(constraint: "未知约束", value: error.localizedDescription)
         } else if errorDescription.contains("duplicate") {
-            return .duplicateEntry("未知字段", error.localizedDescription)
+            return .duplicateEntry(field: "未知字段", value: error.localizedDescription)
         } else if errorDescription.contains("memory") {
-            return .memoryPressure("未知")
+            return .memoryPressure(currentUsage: "未知")
         } else if errorDescription.contains("timeout") {
-            return .queryTimeout(0)
+            return .queryTimeout(duration: 0)
         } else {
-            return .inconsistentState(error.localizedDescription)
+            return .inconsistentState(description: error.localizedDescription)
         }
     }
     

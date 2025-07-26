@@ -11,11 +11,11 @@ struct TemplateSelectionView: View {
     let scenario: ScenarioType
     @EnvironmentObject var alarmManager: AlarmManager
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedTemplate: AlarmTemplate?
+    @State private var selectedTemplate: LegacyAlarmTemplate?
     @State private var showingAddAlarm = false
     @State private var searchText = ""
     
-    var templates: [AlarmTemplate] {
+    var templates: [LegacyAlarmTemplate] {
         let allTemplates = TemplateData.getTemplates(for: scenario)
         if searchText.isEmpty {
             return allTemplates
@@ -28,7 +28,7 @@ struct TemplateSelectionView: View {
         }
     }
     
-    var groupedTemplates: [String: [AlarmTemplate]] {
+    var groupedTemplates: [String: [LegacyAlarmTemplate]] {
         Dictionary(grouping: templates) { $0.category }
     }
     
@@ -70,7 +70,7 @@ struct TemplateSelectionView: View {
 }
 
 struct TemplateRowView: View {
-    let template: AlarmTemplate
+    let template: LegacyAlarmTemplate
     let action: () -> Void
     
     var body: some View {

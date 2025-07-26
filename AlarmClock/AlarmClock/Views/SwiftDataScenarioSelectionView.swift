@@ -163,13 +163,16 @@ struct SwiftDataTemplateRowView: View {
 }
 
 #Preview {
-    do {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: config)
-        
-        return SwiftDataScenarioSelectionView()
-            .modelContainer(container)
-    } catch {
-        return Text("Preview Error: \(error.localizedDescription)")
+    SwiftDataScenarioSelectionViewPreview()
+}
+
+struct SwiftDataScenarioSelectionViewPreview: View {
+    var body: some View {
+        if let container = try? ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)) {
+            SwiftDataScenarioSelectionView()
+                .modelContainer(container)
+        } else {
+            Text("Preview Error: Failed to create ModelContainer")
+        }
     }
 }

@@ -64,9 +64,8 @@ struct PerformanceMonitorView: View {
                     
                     Button("清理缓存") {
                         // 通过重新创建manager来清理缓存
-                        if let container = modelContext.container {
-                            alarmManager = SwiftDataAlarmManager(modelContext: modelContext, container: container)
-                        }
+                        let container = modelContext.container
+                        alarmManager = SwiftDataAlarmManager(modelContext: modelContext, container: container)
                         refreshStats()
                     }
                     .foregroundColor(.orange)
@@ -103,10 +102,9 @@ struct PerformanceMonitorView: View {
     }
     
     private func setupAlarmManager() {
-        if let container = modelContext.container {
-            alarmManager = SwiftDataAlarmManager(modelContext: modelContext, container: container)
-            refreshStats()
-        }
+        let container = modelContext.container
+        alarmManager = SwiftDataAlarmManager(modelContext: modelContext, container: container)
+        refreshStats()
     }
     
     private func refreshStats() {
@@ -193,13 +191,16 @@ struct CompletedOperationView: View {
 }
 
 #Preview {
-    do {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: config)
-        
-        return PerformanceMonitorView()
-            .modelContainer(container)
-    } catch {
-        return Text("Preview Error: \(error.localizedDescription)")
+    PerformanceMonitorViewPreview()
+}
+
+struct PerformanceMonitorViewPreview: View {
+    var body: some View {
+        if let container = try? ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)) {
+            PerformanceMonitorView()
+                .modelContainer(container)
+        } else {
+            Text("Preview Error: Failed to create container")
+        }
     }
 }

@@ -47,7 +47,7 @@ struct AlarmListView: View {
 }
 
 struct AlarmRowView: View {
-    let alarm: Alarm
+    let alarm: AlarmData
     @EnvironmentObject var alarmManager: AlarmManager
     
     var body: some View {

@@ -50,9 +50,8 @@ struct SwiftDataAlarmListView: View {
     }
     
     private func setupAlarmManager() {
-        if let container = modelContext.container {
-            alarmManager = SwiftDataAlarmManager(modelContext: modelContext, container: container)
-        }
+        let container = modelContext.container
+        alarmManager = SwiftDataAlarmManager(modelContext: modelContext, container: container)
     }
     
     private func deleteAlarms(offsets: IndexSet) {
@@ -129,9 +128,8 @@ struct SwiftDataAlarmRowView: View {
     }
     
     private func setupAlarmManager() {
-        if let container = modelContext.container {
-            alarmManager = SwiftDataAlarmManager(modelContext: modelContext, container: container)
-        }
+        let container = modelContext.container
+        alarmManager = SwiftDataAlarmManager(modelContext: modelContext, container: container)
     }
     
     private func toggleAlarm(enabled: Bool) {
@@ -145,21 +143,25 @@ struct SwiftDataAlarmRowView: View {
 }
 
 #Preview {
-    do {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: config)
-        
-        // 添加示例数据
-        let context = container.mainContext
-        let sampleAlarm = Alarm(
-            time: Calendar.current.date(bySettingHour: 7, minute: 0, second: 0, of: Date()) ?? Date(),
-            label: "工作日闹钟"
-        )
-        context.insert(sampleAlarm)
-        
-        return SwiftDataAlarmListView()
-            .modelContainer(container)
-    } catch {
-        return Text("Preview Error: \(error.localizedDescription)")
+    SwiftDataAlarmListViewPreview()
+}
+
+struct SwiftDataAlarmListViewPreview: View {
+    var body: some View {
+        if let container = try? ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)) {
+            SwiftDataAlarmListView()
+                .modelContainer(container)
+                .onAppear {
+                    // 添加示例数据
+                    let context = container.mainContext
+                    let sampleAlarm = Alarm(
+                        time: Calendar.current.date(bySettingHour: 7, minute: 0, second: 0, of: Date()) ?? Date(),
+                        label: "工作日闹钟"
+                    )
+                    context.insert(sampleAlarm)
+                }
+        } else {
+            Text("Preview Error: Failed to create ModelContainer")
+        }
     }
 }

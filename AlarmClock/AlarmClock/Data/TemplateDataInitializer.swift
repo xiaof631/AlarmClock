@@ -17,7 +17,7 @@ final class TemplateDataInitializer {
         print("开始检查模板数据初始化...")
         
         // 检查是否已经初始化过模板数据
-        let fetchDescriptor = FetchDescriptor<SwiftDataModels.AlarmTemplate>()
+        let fetchDescriptor = FetchDescriptor<AlarmTemplate>()
         let existingTemplates = try context.fetch(fetchDescriptor)
         
         if !existingTemplates.isEmpty {
@@ -32,7 +32,7 @@ final class TemplateDataInitializer {
         
         var insertedCount = 0
         for templateData in allTemplateData {
-            let template = SwiftDataModels.AlarmTemplate(
+            let template = AlarmTemplate(
                 name: templateData.name,
                 category: templateData.category,
                 icon: templateData.icon,
@@ -188,5 +188,5 @@ struct TemplateDataStruct {
     let frequency: String
     let defaultTime: String
     let repeatType: String
-    let scenario: SwiftDataModels.ScenarioType
+    let scenario: ScenarioType
 }

@@ -16,13 +16,13 @@ enum SwiftDataModels {}
 @Model
 final class Alarm {
     @Attribute(.unique) var id: UUID
-    @Attribute(.index) var time: Date  // 索引优化：时间字段用于排序查询
+    var time: Date  // 时间字段用于排序查询
     var label: String
-    @Attribute(.index) var isEnabled: Bool  // 索引优化：启用状态用于筛选查询
+    var isEnabled: Bool  // 启用状态用于筛选查询
     var sound: String
     var snoozeEnabled: Bool
     var vibrationEnabled: Bool
-    @Attribute(.index) var createdAt: Date  // 索引优化：创建时间用于排序
+    var createdAt: Date  // 创建时间用于排序
     var updatedAt: Date
     
     // 关系属性
@@ -91,7 +91,7 @@ final class Alarm {
 @Model
 final class AlarmRepeat {
     @Attribute(.unique) var id: UUID
-    @Attribute(.index) var weekday: Int // 1-7 对应周日到周六，索引优化用于重复天数查询
+    var weekday: Int // 1-7 对应周日到周六，用于重复天数查询
     
     @Relationship var alarm: Alarm?
     
@@ -108,18 +108,17 @@ final class AlarmRepeat {
 
 // MARK: - AlarmTemplate SwiftData模型
 @Model
-extension SwiftDataModels {
-    final class AlarmTemplate {
+final class AlarmTemplate {
     @Attribute(.unique) var id: UUID
     var name: String
-    @Attribute(.index) var category: String  // 索引优化：分类用于分组查询
+    var category: String  // 分类用于分组查询
     var icon: String
     var templateDescription: String
     var time: String
     var frequency: String
     var defaultTime: String
     var repeatType: String
-    @Attribute(.index) var scenario: String  // 索引优化：场景用于筛选查询
+    var scenario: String  // 场景用于筛选查询
     
     @Relationship var alarms: [Alarm] = []
     
@@ -169,7 +168,6 @@ extension SwiftDataModels {
     var scenarioType: ScenarioType? {
         return ScenarioType(rawValue: scenario)
     }
-    }
 }
 
 // MARK: - 保留原有枚举用于兼容性
@@ -205,8 +203,7 @@ enum Weekday: Int, CaseIterable, Codable, Comparable {
     }
 }
 
-extension SwiftDataModels {
-    enum ScenarioType: String, CaseIterable, Codable {
+enum ScenarioType: String, CaseIterable, Codable {
     case work = "work"
     case study = "study"
     case health = "health"
@@ -286,7 +283,6 @@ extension SwiftDataModels {
         case .growth: return "自我反思、目标管理、心理健康"
         }
     }
-    }
 }
 
 // MARK: - 用于迁移的旧模型结构体
@@ -302,15 +298,4 @@ struct LegacyAlarm: Codable {
     var template: LegacyAlarmTemplate?
 }
 
-struct LegacyAlarmTemplate: Codable {
-    let id: UUID
-    let name: String
-    let category: String
-    let icon: String
-    let description: String
-    let time: String
-    let frequency: String
-    let defaultTime: String
-    let repeatType: String
-    let scenario: ScenarioType
-}
+// LegacyAlarmTemplate 已在 AlarmModel.swift 中定义

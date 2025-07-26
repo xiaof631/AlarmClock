@@ -14,7 +14,7 @@ import UserNotifications
 final class SwiftDataAlarmManager: SwiftDataErrorHandling {
     private let modelContext: ModelContext
     private let performanceOptimizer: PerformanceOptimizer
-    private let operationTracker: DataOperationTracker
+    let operationTracker: DataOperationTracker
     private let errorHandler = SwiftDataErrorHandler.shared
     private let logger = SwiftDataLogger.shared
     
@@ -186,10 +186,11 @@ final class SwiftDataAlarmManager: SwiftDataErrorHandling {
     }
     
     func fetchAlarms(for scenario: ScenarioType) throws -> [Alarm] {
-        let predicate = #Predicate<Alarm> { alarm in
+        // 获取所有闹钟然后在内存中过滤，避免复杂的SwiftData Predicate
+        let allAlarms = try performanceOptimizer.fetchAlarmsOptimized(predicate: nil)
+        return allAlarms.filter { alarm in
             alarm.template?.scenario == scenario.rawValue
         }
-        return try performanceOptimizer.fetchAlarmsOptimized(predicate: predicate)
     }
     
     func fetchAlarmsPaginated(offset: Int = 0, limit: Int = 20) throws -> [Alarm] {
@@ -433,11 +434,7 @@ final class SwiftDataAlarmManager: SwiftDataErrorHandling {
         return performanceOptimizer.getMemoryUsageStats()
     }
     
-    /// 获取操作跟踪器
-    var operationTracker: DataOperationTracker {
-        return self.operationTracker
-    }
-    
+
     /// 优化内存使用
     func optimizeMemoryUsage() {
         let operation = DataOperation(type: .memoryOptimization, description: "内存优化")
@@ -576,11 +573,9 @@ final class SwiftDataAlarmManager: SwiftDataErrorHandling {
             return allAlarms.filter { alarm in
                 if let template = alarm.template {
                     // 检查模板是否仍然存在于数据库中
-                    let templateDescriptor = FetchDescriptor<AlarmTemplate>(
-                        predicate: #Predicate { $0.id == template.id }
-                    )
+                    let templateDescriptor = FetchDescriptor<AlarmTemplate>()
                     let templates = try? context.fetch(templateDescriptor)
-                    return templates?.isEmpty ?? true
+                    return templates?.first(where: { $0.id == template.id }) == nil
                 }
                 return false
             }

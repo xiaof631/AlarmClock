@@ -1,3 +1,11 @@
+<!--
+ * @Author: slw 18071715194@189.cn
+ * @Date: 2025-07-24 15:08:02
+ * @LastEditors: slw 18071715194@189.cn
+ * @LastEditTime: 2025-07-26 22:09:31
+ * @FilePath: /iOS Alarm App Design with AlarmKit and Customization/AlarmKit 框架技术总结.md
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 # AlarmKit 框架技术总结
 
 ## 概述

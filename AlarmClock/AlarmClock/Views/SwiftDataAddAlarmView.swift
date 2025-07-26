@@ -193,13 +193,16 @@ struct SwiftDataAddAlarmView: View {
 }
 
 #Preview {
-    do {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: config)
-        
-        return SwiftDataAddAlarmView()
-            .modelContainer(container)
-    } catch {
-        return Text("Preview Error: \(error.localizedDescription)")
+    SwiftDataAddAlarmViewPreview()
+}
+
+struct SwiftDataAddAlarmViewPreview: View {
+    var body: some View {
+        if let container = try? ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)) {
+            SwiftDataAddAlarmView()
+                .modelContainer(container)
+        } else {
+            Text("Preview Error: Failed to create container")
+        }
     }
 }

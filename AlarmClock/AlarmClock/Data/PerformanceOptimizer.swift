@@ -182,7 +182,7 @@ final class PerformanceOptimizer {
     /// 批量删除闹钟
     func batchDeleteAlarms(matching predicate: Predicate<Alarm>) async throws -> Int {
         return try await performBackgroundTask { context in
-            let fetchDescriptor = FetchDescriptor<Alarm>()
+            var fetchDescriptor = FetchDescriptor<Alarm>()
             fetchDescriptor.predicate = predicate
             
             let alarmsToDelete = try context.fetch(fetchDescriptor)
@@ -200,7 +200,7 @@ final class PerformanceOptimizer {
     /// 批量更新闹钟状态
     func batchUpdateAlarmStatus(enabled: Bool, matching predicate: Predicate<Alarm>) async throws -> Int {
         return try await performBackgroundTask { context in
-            let fetchDescriptor = FetchDescriptor<Alarm>()
+            var fetchDescriptor = FetchDescriptor<Alarm>()
             fetchDescriptor.predicate = predicate
             
             let alarmsToUpdate = try context.fetch(fetchDescriptor)
@@ -418,14 +418,7 @@ struct DataOperation: Identifiable {
     }
 }
 
-enum DataOperationType {
-    case batchInsert
-    case batchUpdate
-    case batchDelete
-    case migration
-    case cacheRefresh
-    case memoryOptimization
-}
+// DataOperationType 已在 SwiftDataLogger.swift 中定义
 
 struct MemoryUsageStats {
     let totalPhysicalMemory: UInt64
