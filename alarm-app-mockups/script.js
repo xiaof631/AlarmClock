@@ -1084,63 +1084,63 @@ const scenarioTemplates = {
         templates: [
             {
                 name: '社区会议',
-                category: '社区活动',
+                category: '社区参与',
                 icon: '🏛️',
-                desc: '业主大会等社区会议',
+                desc: '业主大会社区会议提醒',
                 time: '提前1天',
                 frequency: '按通知',
                 defaultTime: '19:00',
-                repeat: 'custom'
-            },
-            {
-                name: '邻里互助',
-                category: '邻里关系',
-                icon: '🤝',
-                desc: '帮助邻居代收快递',
-                time: '按需',
-                frequency: '不定期',
-                defaultTime: '18:00',
                 repeat: 'never'
             },
             {
                 name: '垃圾分类投放',
                 category: '环保行动',
                 icon: '♻️',
-                desc: '特定垃圾投放日提醒',
-                time: '投放日',
-                frequency: '每周',
+                desc: '垃圾分类投放时间提醒',
+                time: '准时',
+                frequency: '每天',
                 defaultTime: '07:00',
-                repeat: 'weekly'
+                repeat: 'daily'
             },
             {
-                name: '公共设施维护',
-                category: '社区活动',
-                icon: '🔧',
-                desc: '参与社区设施维护',
-                time: '按安排',
-                frequency: '不定期',
-                defaultTime: '09:00',
-                repeat: 'custom'
-            },
-            {
-                name: '宠物看护',
+                name: '邻里互助',
                 category: '邻里关系',
-                icon: '🐕',
-                desc: '帮助邻居照看宠物',
-                time: '按约定',
-                frequency: '按需',
-                defaultTime: '08:00',
+                icon: '🤝',
+                desc: '帮助邻居或寻求帮助',
+                time: '按需',
+                frequency: '不定期',
+                defaultTime: '10:00',
                 repeat: 'never'
             },
             {
-                name: '社区活动参与',
-                category: '社区活动',
-                icon: '🎉',
-                desc: '社区聚会活动提醒',
-                time: '提前2小时',
-                frequency: '不定期',
-                defaultTime: '14:00',
-                repeat: 'custom'
+                name: '社区活动',
+                category: '社区参与',
+                icon: '🎪',
+                desc: '社区文化活动参与',
+                time: '提前30分钟',
+                frequency: '按安排',
+                defaultTime: '15:00',
+                repeat: 'never'
+            },
+            {
+                name: '公共设施报修',
+                category: '社区维护',
+                icon: '🔧',
+                desc: '发现问题及时报修',
+                time: '发现时',
+                frequency: '按需',
+                defaultTime: '09:00',
+                repeat: 'never'
+            },
+            {
+                name: '社区志愿服务',
+                category: '社区参与',
+                icon: '🌟',
+                desc: '参与社区志愿服务',
+                time: '按安排',
+                frequency: '每月',
+                defaultTime: '09:00',
+                repeat: 'monthly'
             }
         ]
     },

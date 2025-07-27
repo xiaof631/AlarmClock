@@ -42,40 +42,40 @@ struct ScenarioSelectionView: View {
     }
 }
 
-struct ScenarioCard: View {
-    let scenario: ScenarioType
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 12) {
-                Text(scenario.icon)
-                    .font(.system(size: 40))
-                
-                Text(scenario.title)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                
-                Text(scenario.description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 120)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.systemGray6))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color(.systemGray4), lineWidth: 1)
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
+//struct ScenarioCard: View {
+//    let scenario: ScenarioType
+//    let action: () -> Void
+//    
+//    var body: some View {
+//        Button(action: action) {
+//            VStack(spacing: 12) {
+//                Text(scenario.icon)
+//                    .font(.system(size: 40))
+//                
+//                Text(scenario.title)
+//                    .font(.headline)
+//                    .foregroundColor(.primary)
+//                
+//                Text(scenario.description)
+//                    .font(.caption)
+//                    .foregroundColor(.secondary)
+//                    .multilineTextAlignment(.center)
+//                    .lineLimit(2)
+//            }
+//            .frame(maxWidth: .infinity)
+//            .frame(height: 120)
+//            .background(
+//                RoundedRectangle(cornerRadius: 16)
+//                    .fill(Color(.systemGray6))
+//            )
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 16)
+//                    .stroke(Color(.systemGray4), lineWidth: 1)
+//            )
+//        }
+//        .buttonStyle(PlainButtonStyle())
+//    }
+//}
 
 #Preview {
     ScenarioSelectionView()
