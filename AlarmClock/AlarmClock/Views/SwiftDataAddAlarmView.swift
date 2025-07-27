@@ -30,8 +30,7 @@ struct SwiftDataAddAlarmView: View {
     }
     
     var body: some View {
-        NavigationView {
-            Form {
+        Form {
                 Section {
                     DatePicker("时间", selection: $selectedTime, displayedComponents: .hourAndMinute)
                         .datePickerStyle(.wheel)
@@ -100,20 +99,19 @@ struct SwiftDataAddAlarmView: View {
                     Toggle("稍后提醒", isOn: $snoozeEnabled)
                     Toggle("振动", isOn: $vibrationEnabled)
                 }
-            }
-            .navigationTitle("添加闹钟")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("取消") {
-                        dismiss()
-                    }
+        }
+        .navigationTitle("添加闹钟")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("取消") {
+                    dismiss()
                 }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("保存") {
-                        saveAlarm()
-                    }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("保存") {
+                    saveAlarm()
                 }
             }
         }

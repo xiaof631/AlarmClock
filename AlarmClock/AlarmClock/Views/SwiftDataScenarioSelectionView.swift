@@ -62,8 +62,7 @@ struct SwiftDataTemplateSelectionView: View {
   @Environment(\.modelContext) private var modelContext
   @EnvironmentObject var tabBarVisibility: TabBarVisibility
   @EnvironmentObject private var themeManager: ThemeManager
-  @State private var selectedTemplate: AlarmTemplate?
-  @State private var showingAddAlarm = false
+
   @State private var searchText = ""
   @State private var errorMessage: String?
   @State private var showingError = false
@@ -149,157 +148,180 @@ struct SwiftDataTemplateSelectionView: View {
     print("🏁 初始化流程结束，最终模板数量: \(allTemplates.count)")
   }
 
-  var body: some View {
-    print(
-      "🎨 渲染视图 - 场景: \(scenario.rawValue), 模板数量: \(allTemplates.count), 初始化状态: \(isInitializing), 已初始化: \(hasInitialized), 刷新触发器: \(refreshTrigger)"
-    )
-
-    return VStack {
-      // 在渲染时检查是否需要初始化
-      let _ = {
-        if allTemplates.isEmpty && !hasInitialized && !isInitializing {
-          print("🔄 渲染时触发初始化")
-          Task {
-            await initializeTemplatesIfNeeded()
-          }
-        }
-      }()
-
-      if isInitializing {
-        VStack(spacing: 16) {
-          ProgressView()
-            .scaleEffect(1.2)
-          Text("正在加载模板数据...")
-            .themedForeground(.secondaryText)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-      } else if allTemplates.isEmpty {
-        if hasInitialized {
-          // 初始化完成但没有数据
-          VStack(spacing: 16) {
-            Image(systemName: "tray")
-              .font(.system(size: 48))
-              .themedForeground(.secondaryText)
-            Text("暂无\(scenario.title)模板")
-              .font(.headline)
-              .themedForeground(.secondaryText)
-            Text("请稍后再试或联系开发者")
-              .font(.caption)
-              .themedForeground(.secondaryText)
-          }
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else {
-          // 还未初始化，显示加载状态
-          VStack(spacing: 16) {
-            ProgressView()
-              .scaleEffect(1.2)
-            Text("正在初始化模板数据...")
-              .themedForeground(.secondaryText)
-          }
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-      } else {
-        List {
-          ForEach(groupedTemplates.keys.sorted(), id: \.self) { category in
-            Section(header: Text(category)) {
-              ForEach(groupedTemplates[category] ?? []) { template in
-                SwiftDataTemplateRowView(template: template) {
-                  selectedTemplate = template
-                  showingAddAlarm = true
-                }
-              }
+  // 分解复杂视图为计算属性
+  @ViewBuilder
+  private var contentView: some View {
+    if isInitializing {
+      loadingView
+    } else if allTemplates.isEmpty {
+      emptyStateView
+    } else {
+      templateListView
+    }
+  }
+  
+  @ViewBuilder
+  private var loadingView: some View {
+    VStack(spacing: 16) {
+      ProgressView()
+        .scaleEffect(1.2)
+      Text("正在加载模板数据...")
+        .themedForeground(.secondaryText)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+  }
+  
+  @ViewBuilder
+  private var emptyStateView: some View {
+    if hasInitialized {
+      VStack(spacing: 16) {
+        Image(systemName: "tray")
+          .font(.system(size: 48))
+          .themedForeground(.secondaryText)
+        Text("暂无\(scenario.title)模板")
+          .font(.headline)
+          .themedForeground(.secondaryText)
+        Text("请稍后再试或联系开发者")
+          .font(.caption)
+          .themedForeground(.secondaryText)
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    } else {
+      VStack(spacing: 16) {
+        ProgressView()
+          .scaleEffect(1.2)
+        Text("正在初始化模板数据...")
+          .themedForeground(.secondaryText)
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+  }
+  
+  @ViewBuilder
+  private var templateListView: some View {
+    List {
+      ForEach(groupedTemplates.keys.sorted(), id: \.self) { category in
+        Section(header: Text(category)) {
+          ForEach(groupedTemplates[category] ?? []) { template in
+            NavigationLink(
+              destination: SwiftDataAddAlarmView(template: template)
+            ) {
+              SwiftDataTemplateRowView(template: template)
             }
           }
         }
-        .searchable(text: $searchText, prompt: "搜索模板")
       }
     }
-    .navigationTitle(scenario.title)
-    .navigationBarTitleDisplayMode(.large)
-    .onAppear {
-      print("📱 二级页面出现 - 应该隐藏 TabBar - 场景: \(scenario.rawValue)")
-      tabBarVisibility.hide()
-    }
-    .onDisappear {
-      print("📱 二级页面消失 - 场景: \(scenario.rawValue)")
-      tabBarVisibility.show()
-    }
-    .task {
-      print("🚀 Task 触发 - 场景: \(scenario.rawValue)")
-      await initializeTemplatesIfNeeded()
-    }
-    .onAppear {
-      print("📱 视图出现 - 场景: \(scenario.rawValue)")
-      if allTemplates.isEmpty && !hasInitialized && !isInitializing {
-        print("🔄 onAppear 触发初始化")
-        Task {
-          await initializeTemplatesIfNeeded()
-        }
+    .searchable(text: $searchText, prompt: "搜索模板")
+  }
+
+  var body: some View {
+    let _ = print(
+      "🎨 渲染视图 - 场景: \(scenario.rawValue), 模板数量: \(allTemplates.count), 初始化状态: \(isInitializing), 已初始化: \(hasInitialized), 刷新触发器: \(refreshTrigger)"
+    )
+    
+    let _ = checkInitializationNeeded()
+    
+    return contentView
+      .navigationTitle(scenario.title)
+      .navigationBarTitleDisplayMode(.large)
+      .onAppear(perform: handleViewAppear)
+      .onDisappear(perform: handleViewDisappear)
+      .task { await handleTask() }
+      .onChange(of: allTemplates.count) { (oldValue: Int, newValue: Int) in
+         handleTemplateCountChange(oldValue: oldValue, newValue: newValue)
+       }
+      .alert("错误", isPresented: $showingError) {
+        Button("确定") {}
+      } message: {
+        Text(errorMessage ?? "未知错误")
+      }
+  }
+  
+  // 分解方法
+  private func checkInitializationNeeded() {
+    if allTemplates.isEmpty && !hasInitialized && !isInitializing {
+      print("🔄 渲染时触发初始化")
+      Task {
+        await initializeTemplatesIfNeeded()
       }
     }
-    .onChange(of: allTemplates.count) { oldValue, newValue in
-      print("📊 模板数量变化: \(oldValue) -> \(newValue)")
-      if newValue == 0 && !hasInitialized && !isInitializing {
-        print("🔄 onChange 触发初始化")
-        Task {
-          await initializeTemplatesIfNeeded()
-        }
+  }
+  
+  private func handleViewAppear() {
+    print("📱 二级页面出现 - 应该隐藏 TabBar - 场景: \(scenario.rawValue)")
+    tabBarVisibility.hide()
+    
+    if allTemplates.isEmpty && !hasInitialized && !isInitializing {
+      print("🔄 onAppear 触发初始化")
+      Task {
+        await initializeTemplatesIfNeeded()
       }
     }
-    .sheet(isPresented: $showingAddAlarm) {
-      if let template = selectedTemplate {
-        SwiftDataAddAlarmView(template: template)
+  }
+  
+  private func handleViewDisappear() {
+    print("📱 二级页面消失 - 场景: \(scenario.rawValue)")
+    tabBarVisibility.show()
+  }
+  
+  private func handleTask() async {
+    print("🚀 Task 触发 - 场景: \(scenario.rawValue)")
+    await initializeTemplatesIfNeeded()
+  }
+  
+  private func handleTemplateCountChange(oldValue: Int, newValue: Int) {
+    print("📊 模板数量变化: \(oldValue) -> \(newValue)")
+    if newValue == 0 && !hasInitialized && !isInitializing {
+      print("🔄 onChange 触发初始化")
+      Task {
+        await initializeTemplatesIfNeeded()
       }
-    }
-    .alert("错误", isPresented: $showingError) {
-      Button("确定") {}
-    } message: {
-      Text(errorMessage ?? "未知错误")
     }
   }
 }
 
 struct SwiftDataTemplateRowView: View {
   let template: AlarmTemplate
-  let action: () -> Void
 
   var body: some View {
-    Button(action: action) {
-      HStack(spacing: 12) {
-        Text(template.icon)
-          .font(.title2)
-          .frame(width: 40, height: 40)
-          .background(Color(.systemGray6))
-          .clipShape(Circle())
-
-        VStack(alignment: .leading, spacing: 4) {
-          Text(template.name)
-            .font(.headline)
-            .foregroundColor(.primary)
-
-          Text(template.templateDescription)
-            .font(.caption)
-            .foregroundColor(.secondary)
-            .lineLimit(2)
-
-          HStack {
-            Label(template.time, systemImage: "clock")
-            Label(template.frequency, systemImage: "repeat")
-          }
-          .font(.caption2)
-          .foregroundColor(.blue)
-        }
-
-        Spacer()
-
-        Image(systemName: "chevron.right")
-          .font(.caption)
-          .foregroundColor(.secondary)
-      }
-      .padding(.vertical, 4)
+    HStack(spacing: 12) {
+      templateIcon
+      templateInfo
+      Spacer()
     }
-    .buttonStyle(PlainButtonStyle())
+    .padding(.vertical, 4)
   }
+  
+  private var templateIcon: some View {
+    Text(template.icon)
+      .font(.title2)
+      .frame(width: 40, height: 40)
+      .background(Color(.systemGray6))
+      .clipShape(Circle())
+  }
+  
+  private var templateInfo: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text(template.name)
+        .font(.headline)
+        .foregroundColor(.primary)
+
+      Text(template.templateDescription)
+        .font(.caption)
+        .foregroundColor(.secondary)
+        .lineLimit(2)
+
+      HStack {
+        Label(template.time, systemImage: "clock")
+        Label(template.frequency, systemImage: "repeat")
+      }
+      .font(.caption2)
+      .foregroundColor(.blue)
+    }
+  }
+  
+
 }
 
 struct ScenarioCard: View {
