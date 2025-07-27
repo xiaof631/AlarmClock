@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SwiftDataScenarioSelectionView: View {
   @Environment(\.modelContext) private var modelContext
+  @EnvironmentObject var tabBarVisibility: TabBarVisibility
 
   let columns = [
     GridItem(.flexible()),
@@ -17,11 +18,14 @@ struct SwiftDataScenarioSelectionView: View {
   ]
 
   var body: some View {
-    NavigationView {
+    NavigationStack {
       ScrollView {
         LazyVGrid(columns: columns, spacing: 16) {
           ForEach(ScenarioType.allCases, id: \.self) { scenario in
-            NavigationLink(destination: SwiftDataTemplateSelectionView(scenario: scenario)) {
+            NavigationLink(
+              destination: SwiftDataTemplateSelectionView(scenario: scenario)
+                .environmentObject(tabBarVisibility)
+            ) {
               ScenarioCardContent(scenario: scenario)
             }
             .buttonStyle(PlainButtonStyle())
@@ -31,6 +35,13 @@ struct SwiftDataScenarioSelectionView: View {
       }
       .navigationTitle("生活场景")
       .navigationBarTitleDisplayMode(.large)
+    }
+    .onAppear {
+      print("📱 一级页面出现 - 应该显示 TabBar")
+      tabBarVisibility.show()
+    }
+    .onDisappear {
+      print("📱 一级页面消失")
     }
     .task {
       // 在主视图中预先初始化所有模板数据
@@ -48,6 +59,7 @@ struct SwiftDataScenarioSelectionView: View {
 struct SwiftDataTemplateSelectionView: View {
   let scenario: ScenarioType
   @Environment(\.modelContext) private var modelContext
+  @EnvironmentObject var tabBarVisibility: TabBarVisibility
   @State private var selectedTemplate: AlarmTemplate?
   @State private var showingAddAlarm = false
   @State private var searchText = ""
@@ -140,7 +152,7 @@ struct SwiftDataTemplateSelectionView: View {
       "🎨 渲染视图 - 场景: \(scenario.rawValue), 模板数量: \(allTemplates.count), 初始化状态: \(isInitializing), 已初始化: \(hasInitialized), 刷新触发器: \(refreshTrigger)"
     )
 
-    return Group {
+    return VStack {
       // 在渲染时检查是否需要初始化
       let _ = {
         if allTemplates.isEmpty && !hasInitialized && !isInitializing {
@@ -202,17 +214,13 @@ struct SwiftDataTemplateSelectionView: View {
     }
     .navigationTitle(scenario.title)
     .navigationBarTitleDisplayMode(.large)
-    .toolbar {
-      if allTemplates.isEmpty && !isInitializing && hasInitialized {
-        ToolbarItem(placement: .navigationBarTrailing) {
-          Button("重新加载") {
-            Task {
-              hasInitialized = false
-              await initializeTemplatesIfNeeded()
-            }
-          }
-        }
-      }
+    .onAppear {
+      print("📱 二级页面出现 - 应该隐藏 TabBar - 场景: \(scenario.rawValue)")
+      tabBarVisibility.hide()
+    }
+    .onDisappear {
+      print("📱 二级页面消失 - 场景: \(scenario.rawValue)")
+      tabBarVisibility.show()
     }
     .task {
       print("🚀 Task 触发 - 场景: \(scenario.rawValue)")
@@ -339,7 +347,11 @@ struct ScenarioCardContent: View {
   SwiftDataScenarioSelectionViewPreview()
 }
 
+
+
 struct SwiftDataScenarioSelectionViewPreview: View {
+  @State private var isTabBarHidden = false
+  
   var body: some View {
     if let container = try? ModelContainer(
       for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self,
@@ -347,6 +359,7 @@ struct SwiftDataScenarioSelectionViewPreview: View {
     {
       SwiftDataScenarioSelectionView()
         .modelContainer(container)
+        .environmentObject(TabBarVisibility(isHidden: $isTabBarHidden))
     } else {
       Text("Preview Error: Failed to create ModelContainer")
     }

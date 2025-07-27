@@ -10,6 +10,7 @@ import SwiftData
 
 struct SwiftDataContentView: View {
     @State private var selectedTab = 0
+    @State private var isTabBarHidden = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -21,6 +22,7 @@ struct SwiftDataContentView: View {
                 .tag(0)
             
             SwiftDataScenarioSelectionView()
+                .environmentObject(TabBarVisibility(isHidden: $isTabBarHidden))
                 .tabItem {
                     Image(systemName: "list.bullet.rectangle")
                     Text("场景")
@@ -58,6 +60,29 @@ struct SwiftDataContentView: View {
                 .tag(5)
         }
         .accentColor(.blue)
+        .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
+        .animation(.easeInOut(duration: 0.3), value: isTabBarHidden)
+    }
+}
+
+// TabBar 可见性管理器
+class TabBarVisibility: ObservableObject {
+    @Binding var isHidden: Bool
+    
+    init(isHidden: Binding<Bool>) {
+        self._isHidden = isHidden
+    }
+    
+    func hide() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            isHidden = true
+        }
+    }
+    
+    func show() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            isHidden = false
+        }
     }
 }
 
