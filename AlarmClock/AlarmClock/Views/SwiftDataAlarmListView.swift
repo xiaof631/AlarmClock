@@ -11,6 +11,7 @@ import SwiftData
 struct SwiftDataAlarmListView: View {
     @Query(sort: \Alarm.time) private var alarms: [Alarm]
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var themeManager: ThemeManager
     @State private var alarmManager: SwiftDataAlarmManager?
     @State private var showingAddAlarm = false
     @State private var errorMessage: String?
@@ -24,6 +25,7 @@ struct SwiftDataAlarmListView: View {
                 }
                 .onDelete(perform: deleteAlarms)
             }
+            .themedBackground(.listBackground)
             .navigationTitle("我的闹钟")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
@@ -32,6 +34,7 @@ struct SwiftDataAlarmListView: View {
                         showingAddAlarm = true
                     }) {
                         Image(systemName: "plus")
+                            .themedForeground(.accentColor)
                     }
                 }
             }
@@ -70,6 +73,7 @@ struct SwiftDataAlarmListView: View {
 struct SwiftDataAlarmRowView: View {
     let alarm: Alarm
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var themeManager: ThemeManager
     @State private var alarmManager: SwiftDataAlarmManager?
     @State private var errorMessage: String?
     @State private var showingError = false
@@ -85,14 +89,14 @@ struct SwiftDataAlarmRowView: View {
                     if !alarm.label.isEmpty {
                         Text(alarm.label)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .themedForeground(.secondaryText)
                     }
                 }
                 
                 if !alarm.repeatDays.isEmpty {
                     Text(alarm.repeatString)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .themedForeground(.secondaryText)
                 }
                 
                 if let template = alarm.template {
@@ -100,7 +104,7 @@ struct SwiftDataAlarmRowView: View {
                         Text(template.icon)
                         Text(template.name)
                             .font(.caption)
-                            .foregroundColor(.blue)
+                            .themedForeground(.linkColor)
                     }
                 }
             }

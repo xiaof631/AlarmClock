@@ -11,6 +11,7 @@ import SwiftUI
 struct SwiftDataScenarioSelectionView: View {
   @Environment(\.modelContext) private var modelContext
   @EnvironmentObject var tabBarVisibility: TabBarVisibility
+  @EnvironmentObject private var themeManager: ThemeManager
 
   let columns = [
     GridItem(.flexible()),
@@ -60,6 +61,7 @@ struct SwiftDataTemplateSelectionView: View {
   let scenario: ScenarioType
   @Environment(\.modelContext) private var modelContext
   @EnvironmentObject var tabBarVisibility: TabBarVisibility
+  @EnvironmentObject private var themeManager: ThemeManager
   @State private var selectedTemplate: AlarmTemplate?
   @State private var showingAddAlarm = false
   @State private var searchText = ""
@@ -168,7 +170,7 @@ struct SwiftDataTemplateSelectionView: View {
           ProgressView()
             .scaleEffect(1.2)
           Text("正在加载模板数据...")
-            .foregroundColor(.secondary)
+            .themedForeground(.secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
       } else if allTemplates.isEmpty {
@@ -177,13 +179,13 @@ struct SwiftDataTemplateSelectionView: View {
           VStack(spacing: 16) {
             Image(systemName: "tray")
               .font(.system(size: 48))
-              .foregroundColor(.secondary)
+              .themedForeground(.secondaryText)
             Text("暂无\(scenario.title)模板")
               .font(.headline)
-              .foregroundColor(.secondary)
+              .themedForeground(.secondaryText)
             Text("请稍后再试或联系开发者")
               .font(.caption)
-              .foregroundColor(.secondary)
+              .themedForeground(.secondaryText)
           }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
@@ -192,7 +194,7 @@ struct SwiftDataTemplateSelectionView: View {
             ProgressView()
               .scaleEffect(1.2)
             Text("正在初始化模板数据...")
-              .foregroundColor(.secondary)
+              .themedForeground(.secondaryText)
           }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -314,6 +316,7 @@ struct ScenarioCard: View {
 
 struct ScenarioCardContent: View {
   let scenario: ScenarioType
+  @EnvironmentObject private var themeManager: ThemeManager
 
   var body: some View {
     VStack(spacing: 12) {
@@ -322,11 +325,11 @@ struct ScenarioCardContent: View {
 
       Text(scenario.title)
         .font(.headline)
-        .foregroundColor(.primary)
+        .themedForeground(.primaryText)
 
       Text(scenario.description)
         .font(.caption)
-        .foregroundColor(.secondary)
+        .themedForeground(.secondaryText)
         .multilineTextAlignment(.center)
         .lineLimit(2)
     }
@@ -334,11 +337,11 @@ struct ScenarioCardContent: View {
     .frame(height: 120)
     .background(
       RoundedRectangle(cornerRadius: 16)
-        .fill(Color(.systemGray6))
+        .fill(ThemeColorProvider.getColor(for: .cardBackground, theme: themeManager.currentTheme))
     )
     .overlay(
       RoundedRectangle(cornerRadius: 16)
-        .stroke(Color(.systemGray4), lineWidth: 1)
+        .stroke(ThemeColorProvider.getColor(for: .separatorColor, theme: themeManager.currentTheme), lineWidth: 1)
     )
   }
 }

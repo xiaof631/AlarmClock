@@ -11,6 +11,7 @@ import SwiftData
 struct SwiftDataContentView: View {
     @State private var selectedTab = 0
     @State private var isTabBarHidden = false
+    @EnvironmentObject private var themeManager: ThemeManager
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -50,6 +51,13 @@ struct SwiftDataContentView: View {
                     Text("调试")
                 }
                 .tag(4)
+            
+            ThemeDebugView()
+                .tabItem {
+                    Image(systemName: "paintbrush.pointed")
+                    Text("主题调试")
+                }
+                .tag(7)
             #endif
             
             VersionCompatibilityView()
@@ -58,8 +66,16 @@ struct SwiftDataContentView: View {
                     Text("兼容性")
                 }
                 .tag(5)
+            
+            ThemeSettingsView()
+                .tabItem {
+                    Image(systemName: "paintbrush")
+                    Text("主题")
+                }
+                .tag(6)
         }
-        .accentColor(.blue)
+        .themedAccent()
+        .themedBackground(.tabBarBackground)
         .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
         .animation(.easeInOut(duration: 0.3), value: isTabBarHidden)
     }
@@ -203,6 +219,7 @@ struct SwiftDataContentViewPreview: View {
         if let container = try? ModelContainer(for: Alarm.self, AlarmRepeat.self, AlarmTemplate.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true)) {
             SwiftDataContentView()
                 .modelContainer(container)
+                .environmentObject(ThemeManager.shared)
         } else {
             Text("Preview Error: Failed to create container")
         }

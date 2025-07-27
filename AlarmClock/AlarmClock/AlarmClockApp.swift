@@ -11,6 +11,7 @@ import SwiftData
 @main
 struct AlarmClockApp: App {
     let container: ModelContainer
+    @StateObject private var themeManager = ThemeManager.shared
     
     init() {
         do {
@@ -39,6 +40,7 @@ struct AlarmClockApp: App {
         WindowGroup {
             SwiftDataContentView()
                 .modelContainer(container)
+                .environmentObject(themeManager)
                 .task {
                     await performInitialSetup()
                 }

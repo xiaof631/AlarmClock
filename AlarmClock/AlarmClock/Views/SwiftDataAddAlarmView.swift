@@ -11,6 +11,7 @@ import SwiftData
 struct SwiftDataAddAlarmView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var themeManager: ThemeManager
     
     let template: AlarmTemplate?
     
@@ -52,7 +53,7 @@ struct SwiftDataAddAlarmView: View {
                             HStack {
                                 Text(template.icon)
                                 Text(template.name)
-                                    .foregroundColor(.blue)
+                                    .themedForeground(.linkColor)
                             }
                         }
                     }
@@ -84,7 +85,7 @@ struct SwiftDataAddAlarmView: View {
                     if selectedDays.isEmpty {
                         Text("永不重复")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .themedForeground(.secondaryText)
                     }
                 }
                 
@@ -93,7 +94,7 @@ struct SwiftDataAddAlarmView: View {
                         Text("铃声")
                         Spacer()
                         Text(selectedSound)
-                            .foregroundColor(.secondary)
+                            .themedForeground(.secondaryText)
                     }
                     
                     Toggle("稍后提醒", isOn: $snoozeEnabled)
